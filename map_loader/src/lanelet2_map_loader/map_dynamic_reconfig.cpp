@@ -31,6 +31,8 @@
 #include <autoware_lanelet2_msgs/MapBin.h>
 
 #include <string>
+#include <dynamic_reconfigure/server.h>
+#include <map_loader/mapConfig.h>
 
 void printUsage()
 {
@@ -40,10 +42,34 @@ void printUsage()
     "rosrun map_loader lanelet2_map_loader download [X] [Y]: WARNING not implemented");
 }
 
+double lat = 30.28;
+double lon = 120;
+bool received_dc = false;
+
+float RandomFloat(float a, float b) {
+    float random = ((float) rand()) / (float) RAND_MAX;
+    float diff = b - a;
+    float r = random * diff;
+    return a + r;
+}
+
+void callback(map_loader::mapConfig &config, uint32_t level, ros::NodeHandle pnh) {
+  std::cout<<config.lat<< " "<< config.lon<< std::endl;
+  lat = config.lat;
+  lon = config.lon;
+  received_dc = true;
+}
+
 int main(int argc, char ** argv)
 {
   ros::init(argc, argv, "lanelet_map_loader");
   ros::NodeHandle pnh("~");
+
+  dynamic_reconfigure::Server<map_loader::mapConfig> server;
+  dynamic_reconfigure::Server<map_loader::mapConfig>::CallbackType f;
+
+  f = boost::bind(&callback, _1, _2, pnh);
+  server.setCallback(f);
 
   if (argc < 2) {
     printUsage();
@@ -59,9 +85,21 @@ int main(int argc, char ** argv)
   std::string lanelet2_filename(argv[1]);
 
   lanelet::ErrorMessages errors;
+  ros::Rate loop_rate(1);
 
+  
+  while (ros::ok())  
+  {
+  if (! received_dc)
+  {
+    ros::spinOnce();
+    loop_rate.sleep();
+    continue;
+  }
   // lanelet::projection::UtmProjector projector;
-  lanelet::LaneletMapPtr map = lanelet::load(lanelet2_filename, lanelet::projection::UtmProjector(lanelet::Origin({30.28, 120})), &errors);
+  // lat += RandomFloat(-0.01, 0.01);
+  // lon += RandomFloat(-0.01, 0.01);
+  lanelet::LaneletMapPtr map = lanelet::load(lanelet2_filename, lanelet::projection::UtmProjector(lanelet::Origin({lat, lon})), &errors);
 
   for (const auto & error : errors) {
     ROS_ERROR_STREAM(error);
@@ -88,8 +126,12 @@ int main(int argc, char ** argv)
   lanelet::utils::conversion::toBinMsg(map, &map_bin_msg);
 
   map_bin_pub.publish(map_bin_msg);
-
-  ros::spin();
+  std::cout<<"updated map with: "<< lat<< " "<< lon<< std::endl;
+  received_dc = false;
+  ros::spinOnce();
+  loop_rate.sleep();
+  }
+  // ros::spin();
 
   return 0;
 }

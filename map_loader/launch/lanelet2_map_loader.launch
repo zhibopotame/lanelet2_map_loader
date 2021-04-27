@@ -1,14 +1,20 @@
 <launch>
-  <arg name="file_name" default="$(find map_loader)/data/hs.osm"/>
+  <arg name="file_name" default="$(find map_loader)/data/hs_full.osm"/>
   <arg name="lanelet2_map_topic" default="vector_map"/>
   <arg name="lanelet2_map_marker_topic" default="vector_map_marker"/>
 
-  <node pkg="map_loader" type="lanelet2_map_loader" name="lanelet2_map_loader" args="$(arg file_name)">
+  <node pkg="map_loader" type="lanelet2_map_loader" name="lanelet2_map_loader" args="$(arg file_name)" output="screen">
     <remap from="~output/lanelet2_map" to="$(arg lanelet2_map_topic)" />
   </node>
-  <node pkg="map_loader" type="lanelet2_map_visualization" name="lanelet2_map_visualization">
+  <node pkg="map_loader" type="lanelet2_map_visualization" name="lanelet2_map_visualization" output="screen">
     <remap from="~input/lanelet2_map" to="$(arg lanelet2_map_topic)" />
     <remap from="~output/lanelet2_map_marker" to="$(arg lanelet2_map_marker_topic)" />
+  </node>
+
+  <arg name="pointcloud_map_path" default = "/home/zlin/Downloads/hs_pcl/ds.pcd"/>
+
+  <node pkg="map_loader" type="pointcloud_map_loader" name="pointcloud_map_loader" args="$(arg pointcloud_map_path)">
+    <remap from="~output/pointcloud_map" to="/map/pointcloud_map" />
   </node>
 
 </launch>

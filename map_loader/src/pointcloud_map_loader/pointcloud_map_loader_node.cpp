@@ -34,6 +34,8 @@
 
 #include <pcl/io/pcd_io.h>
 #include <pcl_conversions/pcl_conversions.h>
+#include <boost/filesystem.hpp>
+#include <ros/ros.h>
 
 PointCloudMapLoaderNode::PointCloudMapLoaderNode(const std::vector<std::string> & pcd_paths)
 {
@@ -46,8 +48,14 @@ PointCloudMapLoaderNode::PointCloudMapLoaderNode(const std::vector<std::string> 
     ROS_ERROR("No PCD was loaded: pcd_paths.size() = %zu", pcd_paths.size());
     return;
   }
-
-  pub_pointcloud_map_.publish(pcd);
+    
+  ros::Rate loop_rate(5);
+  while (ros::ok())  
+  {
+    pub_pointcloud_map_.publish(pcd);
+    ros::spinOnce();
+    loop_rate.sleep();
+  }
 }
 
 sensor_msgs::PointCloud2 PointCloudMapLoaderNode::loadPCDFiles(
@@ -71,7 +79,7 @@ sensor_msgs::PointCloud2 PointCloudMapLoaderNode::loadPCDFiles(
     }
   }
 
-  whole_pcd.header.frame_id = "map";
+  whole_pcd.header.frame_id = "pcl_map";
 
   return whole_pcd;
 }

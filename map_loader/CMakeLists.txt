@@ -12,9 +12,15 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_geometry_msgs
   tf2_ros
   visualization_msgs
+  dynamic_reconfigure
 )
 
 find_package(Boost REQUIRED COMPONENTS filesystem)
+
+generate_dynamic_reconfigure_options(
+  cfg/map.cfg
+  cfg/pcl_map.cfg
+)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -45,12 +51,17 @@ add_executable(lanelet2_map_visualization src/lanelet2_map_loader/lanelet2_map_v
 target_link_libraries(lanelet2_map_visualization ${catkin_LIBRARIES})
 add_dependencies(lanelet2_map_visualization ${catkin_EXPORTED_TARGETS})
 
+add_executable(map_dynamic_reconfig src/lanelet2_map_loader/map_dynamic_reconfig.cpp)
+target_link_libraries(map_dynamic_reconfig ${catkin_LIBRARIES})
+add_dependencies(map_dynamic_reconfig ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
+
 ## Install executables and/or libraries
 install(
   TARGETS
     pointcloud_map_loader
     lanelet2_map_loader
     lanelet2_map_visualization
+    map_dynamic_reconfig
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
