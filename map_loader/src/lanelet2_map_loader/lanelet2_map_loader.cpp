@@ -45,6 +45,11 @@ int main(int argc, char ** argv)
   ros::init(argc, argv, "lanelet_map_loader");
   ros::NodeHandle pnh("~");
 
+  double origin_lon, origin_lat, theta;
+  pnh.param<double>("/hd_map_calibration/origin_lat", origin_lat, 0.0);
+  pnh.param<double>("/hd_map_calibration/origin_lon", origin_lon, 0.0);
+  pnh.param<double>("/hd_map_calibration/theta", theta, 0.0);
+
   if (argc < 2) {
     printUsage();
     return EXIT_FAILURE;
@@ -60,8 +65,16 @@ int main(int argc, char ** argv)
 
   lanelet::ErrorMessages errors;
 
-  // lanelet::projection::UtmProjector projector;
-  lanelet::LaneletMapPtr map = lanelet::load(lanelet2_filename, lanelet::projection::UtmProjector(lanelet::Origin({30.28, 120})), &errors);
+  lanelet::projection::SphericalMercatorProjector projector = lanelet::projection::SphericalMercatorProjector();
+  lanelet::BasicPoint3d p = {1.3358426758909915e7,3539644.973059331,0.0};
+  lanelet::GPSPoint gp = projector.reverse(p);
+  std::cout<< gp.lat << " " << gp.lon << std::endl;
+  std::cout<< origin_lat << " " << origin_lon << std::endl;
+  lanelet::LaneletMapPtr map = lanelet::load(lanelet2_filename, lanelet::projection::UtmProjector(lanelet::Origin({origin_lat, origin_lon})), &errors);
+  // lanelet::LaneletMapPtr map = lanelet::load(lanelet2_filename, lanelet::projection::SphericalMercatorProjector(lanelet::Origin({13358426.758909915, 3539644.973059331})), &errors);
+
+  // lanelet::projection::MGRSProjector projector;
+  // lanelet::LaneletMapPtr map = lanelet::load(lanelet2_filename, projector, &errors);
 
   for (const auto & error : errors) {
     ROS_ERROR_STREAM(error);

@@ -1,7 +1,9 @@
 <launch>
-  <arg name="file_name" default="$(find map_loader)/data/hs_full.osm"/>
+  <arg name="file_name" default="$(find map_loader)/data/hs.osm"/>
   <arg name="lanelet2_map_topic" default="vector_map"/>
   <arg name="lanelet2_map_marker_topic" default="vector_map_marker"/>
+
+  <rosparam command="load" ns="hd_map_calibration" file="$(find map_loader)/script/hd_map_calibration.yaml" />
 
   <node pkg="map_loader" type="lanelet2_map_loader" name="lanelet2_map_loader" args="$(arg file_name)" output="screen">
     <remap from="~output/lanelet2_map" to="$(arg lanelet2_map_topic)" />
