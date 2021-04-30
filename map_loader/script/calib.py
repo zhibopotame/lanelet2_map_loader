@@ -13,6 +13,20 @@ M10=0.33068499074145674
 M02=-253.44994097919124
 M01=-0.33068499074145674
 M12=499.4035693549777
+origin= [-105.599997, -63.249998]
+
+image_width = 9015
+image_height = 5857
+res = 0.05
+
+A = np.array([[M00, M01, M02],
+              [M10, M11, M12],
+              [0,0,1]])
+
+def rot2d(theta):
+    return np.array([[np.cos(theta), -np.sin(theta)],
+                     [np.sin(theta), np.cos(theta)]])
+
 
 def convert(x, y):
     from pyproj import Proj, transform
@@ -51,7 +65,20 @@ def main():
     file_name = "./hd_map_calibration.yaml"
     documents = rosparam.dump_params(file_name, "hd_map_calibration")
 
+    origin= np.array([-105.599997, -63.249998, 1])
+    origin= np.array([-63.249998, 105.599997 , 1])
+    # origin = [-253.44994097919124/5, 499.4035693549777/5]
+    # origin = np.array(origin).reshape((1,2))
+    # r = rot2d(theta)
+    # print(origin.shape)
+    # print(r.shape)
+    print(np.dot(origin, A.T))
+
+
+def calib():
+
 if __name__ == '__main__':
     rospy.init_node("DynamicTF")
-    main()
+    # main()
+    calib()
 

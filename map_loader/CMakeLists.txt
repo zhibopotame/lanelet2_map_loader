@@ -19,7 +19,7 @@ find_package(Boost REQUIRED COMPONENTS filesystem)
 
 generate_dynamic_reconfigure_options(
   cfg/map.cfg
-  cfg/pcl_map.cfg
+  cfg/pcl_map.cfg 
 )
 
 catkin_package(
