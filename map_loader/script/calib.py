@@ -52,7 +52,7 @@ def main():
     # lon, lat = convert(POSITION_X, POSITION_Y)
     print(convert(POSITION_X, POSITION_Y))
     print(convert_custom(POSITION_X, POSITION_Y))
-    lon, lat = convert_custom(POSITION_X, POSITION_Y)
+    lon, lat = convert(POSITION_X, POSITION_Y)
     theta = get_rotation(M00)
 
     dict_file = {"origin_lon" : lon, "origin_lat" : lat, "theta" : theta}
@@ -65,20 +65,10 @@ def main():
     file_name = "./hd_map_calibration.yaml"
     documents = rosparam.dump_params(file_name, "hd_map_calibration")
 
-    origin= np.array([-105.599997, -63.249998, 1])
-    origin= np.array([-63.249998, 105.599997 , 1])
-    # origin = [-253.44994097919124/5, 499.4035693549777/5]
-    # origin = np.array(origin).reshape((1,2))
-    # r = rot2d(theta)
-    # print(origin.shape)
-    # print(r.shape)
-    print(np.dot(origin, A.T))
-
-
-def calib():
+# def calib():
 
 if __name__ == '__main__':
     rospy.init_node("DynamicTF")
-    # main()
-    calib()
+    main()
+    # calib()
 
