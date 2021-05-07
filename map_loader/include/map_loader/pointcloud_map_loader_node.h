@@ -36,6 +36,8 @@
 #include <ros/ros.h>
 
 #include <sensor_msgs/PointCloud2.h>
+#include <tf/transform_broadcaster.h>
+#include <nav_msgs/MapMetaData.h>
 
 class PointCloudMapLoaderNode
 {
@@ -47,6 +49,10 @@ private:
   ros::NodeHandle private_nh_{"~"};
 
   ros::Publisher pub_pointcloud_map_;
+  ros::Subscriber map_metadata_sub;
+  nav_msgs::MapMetaData map_metadata;
 
   sensor_msgs::PointCloud2 loadPCDFiles(const std::vector<std::string> & pcd_paths);
+  void publish_tf();
+  void callbackMapMetaData(const nav_msgs::MapMetaData &msg);
 };

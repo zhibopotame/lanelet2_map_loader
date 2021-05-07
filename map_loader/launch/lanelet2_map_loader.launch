@@ -15,10 +15,10 @@
     <remap from="~output/lanelet2_map_marker" to="$(arg lanelet2_map_marker_topic)" />
   </node>
 
-  <node pkg="map_loader" type="pointcloud_map_loader" name="pointcloud_map_loader" args="$(arg pointcloud_map_path)">
-    <remap from="~output/pointcloud_map" to="/map/pointcloud_map" />
-  </node>
-
   <node pkg="map_server" type="map_server" name="pcl_grid_map" args="$(arg pcl_grid_map)"/>
 
+  <node pkg="map_loader" type="pointcloud_map_loader" name="pointcloud_map_loader" args="$(arg pointcloud_map_path)" output="screen">
+    <remap from="~output/pointcloud_map" to="/map/pointcloud_map" />
+  </node>
+  
 </launch>

@@ -39,8 +39,8 @@
 
 PointCloudMapLoaderNode::PointCloudMapLoaderNode(const std::vector<std::string> & pcd_paths)
 {
-  pub_pointcloud_map_ =
-    private_nh_.advertise<sensor_msgs::PointCloud2>("output/pointcloud_map", 1, true);
+  pub_pointcloud_map_ = private_nh_.advertise<sensor_msgs::PointCloud2>("output/pointcloud_map", 1, true);
+  map_metadata_sub = nh_.subscribe("map_metadata", 1, &PointCloudMapLoaderNode::callbackMapMetaData, this);
 
   const auto pcd = loadPCDFiles(pcd_paths);
 
@@ -48,16 +48,34 @@ PointCloudMapLoaderNode::PointCloudMapLoaderNode(const std::vector<std::string> 
     ROS_ERROR("No PCD was loaded: pcd_paths.size() = %zu", pcd_paths.size());
     return;
   }
-  
   pub_pointcloud_map_.publish(pcd);
+}
 
-  // ros::Rate loop_rate(5);
-  // while (ros::ok())  
-  // {
-  //   pub_pointcloud_map_.publish(pcd);
-  //   ros::spinOnce();
-  //   loop_rate.sleep();
-  // }
+void PointCloudMapLoaderNode::callbackMapMetaData(const nav_msgs::MapMetaData &msg)
+{
+  map_metadata = msg;
+  
+  publish_tf();
+}
+
+void PointCloudMapLoaderNode::publish_tf()
+{
+  tf::TransformBroadcaster br; 
+  tf::Transform transform;
+  double new_origin_x =  map_metadata.origin.position.x + map_metadata.width/2.0 * map_metadata.resolution;
+  double new_origin_y =  map_metadata.origin.position.y + map_metadata.height/2.0 * map_metadata.resolution;
+  transform.setOrigin(tf::Vector3(new_origin_x, new_origin_y, 0));
+  tf::Quaternion q;
+  q.setRPY(0,0,0);
+  transform.setRotation(q);
+  std::cout<<"publishing tf pcl_map map"<<std::endl;
+  ros::Rate loop_rate(50);
+  while (ros::ok())
+  {
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "pcl_map", "map"));
+    ros::spinOnce();
+    loop_rate.sleep();
+  }
 }
 
 sensor_msgs::PointCloud2 PointCloudMapLoaderNode::loadPCDFiles(

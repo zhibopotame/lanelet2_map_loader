@@ -1,8 +1,16 @@
 # map_loader package
 
-This package provides the features of loading various maps.
+Modify pcd file path in  lanelet2_map_loader.launch
 
-############################################
+```
+roslaunch map_loader lanelet2_map_loader.launch
+```
+
+It will 
+* display .osm file in rviz
+* display pointcloud from pcd file
+* if map server is set correctly, it will fetch the metadata  and publish the correct transform between pcl_map and map
+
 
 ############################################
 
