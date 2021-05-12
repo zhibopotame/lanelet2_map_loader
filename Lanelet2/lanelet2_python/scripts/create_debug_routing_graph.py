@@ -23,7 +23,7 @@ if __name__ == "__main__":
                  "pedestrian": lanelet2.traffic_rules.Participants.Pedestrian,
                  "train": lanelet2.traffic_rules.Participants.Train}
     proj = lanelet2.projection.UtmProjector(lanelet2.io.Origin(0, 0))
-    laneletmap = lanelet2.io.load("/media/zlin/DATA/catkin_local_map/src/lanelet_map_loader/map_loader/data/hs_complexe.osm", proj)
+    laneletmap = lanelet2.io.load("/media/zlin/DATA/catkin_local_map/src/lanelet_map_loader/map_loader/data/hs_pcl.osm", proj)
 
     routing_cost = lanelet2.routing.RoutingCostDistance(0.)  # zero cost for lane changes
     traffic_rules = lanelet2.traffic_rules.create(lanelet2.traffic_rules.Locations.Germany,
