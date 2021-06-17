@@ -31,9 +31,12 @@
 #include <lanelet2_extension/visualization/visualization.h>
 
 #include <vector>
+#include <nav_msgs/OccupancyGrid.h>
 
 static bool g_viz_lanelets_centerline = true;
 static ros::Publisher g_map_pub;
+
+static ros::Publisher occ_map_pub;
 
 void insertMarkerArray(
   visualization_msgs::MarkerArray * a1, const visualization_msgs::MarkerArray & a2)
@@ -135,6 +138,42 @@ void binMapCallback(autoware_lanelet2_msgs::MapBin msg)
     lanelet::visualization::laneletsAsTriangleMarkerArray("road_lanelets", road_lanelets, cl_road));
 
   g_map_pub.publish(map_marker_array);
+
+  bool publish_occ_map = false;
+
+  if (!publish_occ_map)
+    return;
+
+  nav_msgs::OccupancyGrid occ_map;
+  occ_map.header.frame_id = "map";
+  occ_map.header.stamp = ros::Time::now();
+  occ_map.info.width = 9015;
+  occ_map.info.height = 5857;
+  occ_map.info.resolution = 0.05;
+  occ_map.info.origin.position.x = -9015/2 * 0.05;
+  occ_map.info.origin.position.y = -5857/2 * 0.05;
+  occ_map.info.origin.orientation.w = 1.0;
+  occ_map.data.assign(9015 * 5857, -1);
+
+
+  std::cout<<"marker size "<<map_marker_array.markers.size()<<std::endl;
+  for (auto marker : map_marker_array.markers)
+  {
+    for (auto point : marker.points)
+    {
+      unsigned int grid_x = (unsigned int)((point.x - occ_map.info.origin.position.x) / occ_map.info.resolution);
+      unsigned int grid_y = (unsigned int)((point.y - occ_map.info.origin.position.y) / occ_map.info.resolution);
+      unsigned int idx = grid_x + grid_y * occ_map.info.width;
+      // std::cout<<idx <<std::endl;
+      if (idx > occ_map.info.width * occ_map.info.height )
+        continue;
+      occ_map.data[idx] = 100;
+      // std::cout<<"idx = "<<idx << " value = " << occ_map.data[idx] <<std::endl;
+    }
+  }
+  std::cout<<"publishing marker occ map"<<std::endl;
+  occ_map_pub.publish(occ_map);
+
 }
 
 int main(int argc, char ** argv)
@@ -145,6 +184,8 @@ int main(int argc, char ** argv)
 
   bin_map_sub = pnh.subscribe("input/lanelet2_map", 1, binMapCallback);
   g_map_pub = pnh.advertise<visualization_msgs::MarkerArray>("output/lanelet2_map_marker", 1, true);
+
+  occ_map_pub = pnh.advertise<nav_msgs::OccupancyGrid>("map", 1, true);
 
   ros::spin();
 

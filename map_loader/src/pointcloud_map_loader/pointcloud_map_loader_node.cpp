@@ -64,7 +64,7 @@ void PointCloudMapLoaderNode::publish_tf()
   tf::Transform transform;
   double new_origin_x =  map_metadata.origin.position.x + map_metadata.width/2.0 * map_metadata.resolution;
   double new_origin_y =  map_metadata.origin.position.y + map_metadata.height/2.0 * map_metadata.resolution;
-  transform.setOrigin(tf::Vector3(new_origin_x, new_origin_y, 0));
+  transform.setOrigin(tf::Vector3(-new_origin_x, -new_origin_y, 1.2));
   tf::Quaternion q;
   q.setRPY(0,0,0);
   transform.setRotation(q);
@@ -72,7 +72,7 @@ void PointCloudMapLoaderNode::publish_tf()
   ros::Rate loop_rate(50);
   while (ros::ok())
   {
-    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "pcl_map", "map"));
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "pcl_map"));
     ros::spinOnce();
     loop_rate.sleep();
   }
