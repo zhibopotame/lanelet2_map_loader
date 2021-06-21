@@ -21,6 +21,34 @@
     <remap from="~output/pointcloud_map" to="/map/pointcloud_map" />
   </node>
 
+  <arg name="pcl" default="lslidar_point_cloud" />
+
+    <!-- run pointcloud_to_laserscan node -->
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
+
+        <remap from="cloud_in" to="$(arg pcl)"/>
+        <rosparam>
+            # target_frame: camera_link # Leave disabled to output scan in pointcloud frame
+            transform_tolerance: 0.01
+            min_height: -0.8
+            max_height: 1.0
+
+            angle_min: -1.5708 # -M_PI/2
+            angle_max: 1.5708 # M_PI/2
+            angle_increment: 0.0349 # M_PI/90.0
+            scan_time: 0.3333
+            range_min: 0.45
+            range_max: 10.0
+            use_inf: true
+            inf_epsilon: 1.0
+
+            # Concurrency level, affects number of pointclouds queued for processing and number of threads used
+            # 0 : Detect number of cores
+            # 1 : Single threaded
+            # 2->inf : Parallelism level
+            concurrency_level: 1
+        </rosparam>
+
   <!-- <node pkg="tf" type="static_transform_publisher" name="map_odom" args="0.0 0.0 0.0 0.0 0.0 0.0 map odom 100" /> -->
   <node pkg="tf" type="static_transform_publisher" name="pcl_map_lego_odom" args="0.0 0.0 0.0 0.0 0.0 0.0 pcl_map lego_odom 100" />
   <node pkg="tf" type="static_transform_publisher" name="lego_laser" args="0.0 0.0 0.0 0.0 0.0 0.0 lego_base_link laser_link 100" />
