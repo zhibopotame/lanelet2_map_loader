@@ -48,8 +48,9 @@
             # 2->inf : Parallelism level
             concurrency_level: 1
         </rosparam>
+    </node>
 
-  <!-- <node pkg="tf" type="static_transform_publisher" name="map_odom" args="0.0 0.0 0.0 0.0 0.0 0.0 map odom 100" /> -->
+  <node pkg="tf" type="static_transform_publisher" name="map_odom" args="0.0 0.0 0.0 0.0 0.0 0.0 map odom 100" />
   <node pkg="tf" type="static_transform_publisher" name="pcl_map_lego_odom" args="0.0 0.0 0.0 0.0 0.0 0.0 pcl_map lego_odom 100" />
   <node pkg="tf" type="static_transform_publisher" name="lego_laser" args="0.0 0.0 0.0 0.0 0.0 0.0 lego_base_link laser_link 100" />
 
