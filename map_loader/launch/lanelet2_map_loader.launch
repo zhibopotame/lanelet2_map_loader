@@ -2,7 +2,7 @@
   <arg name="file_name" default="$(find map_loader)/data/hs_pcl.osm"/>
   <arg name="lanelet2_map_topic" default="vector_map"/>
   <arg name="lanelet2_map_marker_topic" default="vector_map_marker"/>
-  <arg name="pointcloud_map_path" default = "/home/zlin/Downloads/hs_pcl/ds.pcd"/>
+  <arg name="pointcloud_map_path" default = "$(find map_loader)/data/ds.pcd"/>
   <arg name="pcl_grid_map" default = "$(find map_loader)/data/map.yaml"/>
 
   <!-- <rosparam command="load" ns="hd_map_calibration" file="$(find map_loader)/script/hd_map_calibration.yaml" /> -->
@@ -21,10 +21,10 @@
     <remap from="~output/pointcloud_map" to="/map/pointcloud_map" />
   </node>
 
-  <arg name="pcl" default="lslidar_point_cloud" />
+  <!-- <arg name="pcl" default="lslidar_point_cloud" /> -->
 
     <!-- run pointcloud_to_laserscan node -->
-    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
+    <!-- <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
 
         <remap from="cloud_in" to="$(arg pcl)"/>
         <rosparam>
@@ -48,7 +48,7 @@
             # 2->inf : Parallelism level
             concurrency_level: 1
         </rosparam>
-    </node>
+    </node> -->
 
   <node pkg="tf" type="static_transform_publisher" name="map_odom" args="0.0 0.0 0.0 0.0 0.0 0.0 map odom 100" />
   <node pkg="tf" type="static_transform_publisher" name="pcl_map_lego_odom" args="0.0 0.0 0.0 0.0 0.0 0.0 pcl_map lego_odom 100" />
