@@ -4,6 +4,7 @@
   <arg name="lanelet2_map_marker_topic" default="vector_map_marker"/>
   <arg name="pointcloud_map_path" default = "$(find map_loader)/data/ds.pcd"/>
   <arg name="pcl_grid_map" default = "$(find map_loader)/data/map.yaml"/>
+  <arg name="rviz_cfg" default = "$(find map_loader)/loader.rviz"/>
 
   <!-- <rosparam command="load" ns="hd_map_calibration" file="$(find map_loader)/script/hd_map_calibration.yaml" /> -->
 
@@ -51,8 +52,10 @@
     </node> -->
 
   <node pkg="tf" type="static_transform_publisher" name="map_odom" args="0.0 0.0 0.0 0.0 0.0 0.0 map odom 100" />
-  <node pkg="tf" type="static_transform_publisher" name="pcl_map_lego_odom" args="0.0 0.0 0.0 0.0 0.0 0.0 pcl_map lego_odom 100" />
-  <node pkg="tf" type="static_transform_publisher" name="lego_laser" args="0.0 0.0 0.0 0.0 0.0 0.0 lego_base_link laser_link 100" />
+  <!-- <node pkg="tf" type="static_transform_publisher" name="pcl_map_lego_odom" args="0.0 0.0 0.0 0.0 0.0 0.0 pcl_map lego_odom 100" />
+  <node pkg="tf" type="static_transform_publisher" name="lego_laser" args="0.0 0.0 0.0 0.0 0.0 0.0 lego_base_link laser_link 100" /> -->
 
-  
+<!-- launch rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rviz_cfg)"/>
+
 </launch>

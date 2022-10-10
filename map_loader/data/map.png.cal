@@ -1,0 +1,11 @@
+#JOSM PicLayer plugin calibration data
+#Sun Oct 09 14:03:28 CST 2022
+POSITION_X=0.0
+POSITION_Y=0.0
+INITIAL_SCALE=5.0
+M00=1.0
+M11=1.0
+M10=0.0
+M02=0.0
+M01=0.0
+M12=0.0
